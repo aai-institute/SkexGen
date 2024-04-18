@@ -10,9 +10,9 @@ import sys
 sys.path.insert(0, 'utils')
 from utils import CADparser, write_obj_sample
 
-NUM_TRHEADS = 36 
-NUM_SAMPLE = 20000
-BS = 1024
+NUM_TRHEADS = 1 
+NUM_SAMPLE = 10
+BS = 10
 
 def sample(args):
     # Initialize gpu device

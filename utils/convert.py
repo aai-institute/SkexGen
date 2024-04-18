@@ -29,7 +29,7 @@ def raise_timeout(signum, frame):
     raise TimeoutError
 
 NUM_TRHEADS = 36
-NUM_FOLDERS = 100
+NUM_FOLDERS = 1
 
 def load_json_data(pathname):
     """Load data from a json file"""
