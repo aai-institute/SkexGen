@@ -153,13 +153,13 @@ class CMDEncoder(nn.Module):
     c_embeds = self.c_embed(command.flatten()).view(bs, seq_len, -1) 
 
     embeddings = c_embeds.transpose(0,1)
-    z_embed = self.const_embed(torch.arange(0, self.code_len).long().cuda()).unsqueeze(1).repeat(1, bs, 1) 
+    z_embed = self.const_embed(torch.arange(0, self.code_len).long()).unsqueeze(1).repeat(1, bs, 1) 
     embed_input = torch.cat([z_embed, embeddings], dim=0)
     encoder_input = self.pos_embed(embed_input) 
 
     # Pass through transformer encoder
     if mask is not None:
-        mask = torch.cat([(torch.zeros([bs, self.code_len])==1).cuda(), mask], axis=1)
+        mask = torch.cat([(torch.zeros([bs, self.code_len])==1), mask], axis=1)
     outputs = self.encoder(src=encoder_input, src_key_padding_mask=mask)  
     z_encoded = outputs[0:self.code_len]
 
@@ -181,13 +181,13 @@ class CMDEncoder(nn.Module):
     c_embeds = self.c_embed(command.flatten()).view(bs, seq_len, -1) 
 
     embeddings = c_embeds.transpose(0,1)
-    z_embed = self.const_embed(torch.arange(0, self.code_len).long().cuda()).unsqueeze(1).repeat(1, bs, 1) 
+    z_embed = self.const_embed(torch.arange(0, self.code_len).long()).unsqueeze(1).repeat(1, bs, 1) 
     embed_input = torch.cat([z_embed, embeddings], dim=0)
     encoder_input = self.pos_embed(embed_input) 
 
     # Pass through transformer encoder
     if mask is not None:
-        mask = torch.cat([(torch.zeros([bs, self.code_len])==1).cuda(), mask], axis=1)
+        mask = torch.cat([(torch.zeros([bs, self.code_len])==1), mask], axis=1)
     outputs = self.encoder(src=encoder_input, src_key_padding_mask=mask)  
     z_encoded = outputs[0:self.code_len]
 
@@ -249,13 +249,13 @@ class PARAMEncoder(nn.Module):
     coord_embed = self.coord_embed_x(xy_v[...,0]) + self.coord_embed_y(xy_v[...,1]) # [bs, vlen, dim]
     pixel_embed = self.pixel_embed(pixel_v)
     embeddings = (coord_embed+pixel_embed).transpose(0,1) 
-    z_embed = self.const_embed(torch.arange(0, self.code_len).long().cuda()).unsqueeze(1).repeat(1, bs, 1) 
+    z_embed = self.const_embed(torch.arange(0, self.code_len).long()).unsqueeze(1).repeat(1, bs, 1) 
     embed_input = torch.cat([z_embed, embeddings], dim=0)
     encoder_input = self.pos_embed(embed_input) 
 
     # Pass through encoder
     if mask is not None:
-        mask = torch.cat([(torch.zeros([bs, self.code_len])==1).cuda(), mask], axis=1)
+        mask = torch.cat([(torch.zeros([bs, self.code_len])==1), mask], axis=1)
     outputs = self.encoder(src=encoder_input, src_key_padding_mask=mask)  # [seq_len, bs, dim].transpose(1,0)
     z_encoded = outputs[0:self.code_len]
 
@@ -276,13 +276,13 @@ class PARAMEncoder(nn.Module):
     coord_embed = self.coord_embed_x(xy_v[...,0]) + self.coord_embed_y(xy_v[...,1]) # [bs, vlen, dim]
     pixel_embed = self.pixel_embed(pixel_v)
     embeddings = (coord_embed+pixel_embed).transpose(0,1)
-    z_embed = self.const_embed(torch.arange(0, self.code_len).long().cuda()).unsqueeze(1).repeat(1, bs, 1) 
+    z_embed = self.const_embed(torch.arange(0, self.code_len).long()).unsqueeze(1).repeat(1, bs, 1) 
     embed_input = torch.cat([z_embed, embeddings], dim=0)
     encoder_input = self.pos_embed(embed_input) 
 
     # Pass through encoder
     if mask is not None:
-        mask = torch.cat([(torch.zeros([bs, self.code_len])==1).cuda(), mask], axis=1)
+        mask = torch.cat([(torch.zeros([bs, self.code_len])==1), mask], axis=1)
     outputs = self.encoder(src=encoder_input, src_key_padding_mask=mask)  # [seq_len, bs, dim].transpose(1,0)
     
     z_encoded = outputs[0:self.code_len]
@@ -342,13 +342,13 @@ class EXTEncoder(nn.Module):
     ext_embeds = self.ext_embed(ext_seq)
     flag_embeds = self.flag_embed(flag_seq)
     embeddings = (ext_embeds+flag_embeds).transpose(0,1) #ext_embeds.transpose(0,1) #
-    z_embed = self.const_embed(torch.arange(0, self.code_len).long().cuda()).unsqueeze(1).repeat(1, bs, 1) 
+    z_embed = self.const_embed(torch.arange(0, self.code_len).long()).unsqueeze(1).repeat(1, bs, 1) 
     embed_input = torch.cat([z_embed, embeddings], dim=0)
     encoder_input = self.pos_embed(embed_input) 
 
     # Pass through encoder
     if mask is not None:
-        mask = torch.cat([(torch.zeros([bs, self.code_len])==1).cuda(), mask], axis=1)
+        mask = torch.cat([(torch.zeros([bs, self.code_len])==1), mask], axis=1)
     outputs = self.encoder(src=encoder_input, src_key_padding_mask=mask)  # [seq_len, bs, dim].transpose(1,0)
     z_encoded = outputs[0:self.code_len]
     
@@ -371,13 +371,13 @@ class EXTEncoder(nn.Module):
     ext_embeds = self.ext_embed(ext_seq)
     flag_embeds = self.flag_embed(flag_seq)
     embeddings = (ext_embeds+flag_embeds).transpose(0,1)
-    z_embed = self.const_embed(torch.arange(0, self.code_len).long().cuda()).unsqueeze(1).repeat(1, bs, 1) 
+    z_embed = self.const_embed(torch.arange(0, self.code_len).long()).unsqueeze(1).repeat(1, bs, 1) 
     embed_input = torch.cat([z_embed, embeddings], dim=0)
     encoder_input = self.pos_embed(embed_input) 
 
     # Pass through encoder
     if mask is not None:
-        mask = torch.cat([(torch.zeros([bs, self.code_len])==1).cuda(), mask], axis=1)
+        mask = torch.cat([(torch.zeros([bs, self.code_len])==1), mask], axis=1)
     outputs = self.encoder(src=encoder_input, src_key_padding_mask=mask)  # [seq_len, bs, dim].transpose(1,0)
     
     z_encoded = outputs[0:self.code_len]

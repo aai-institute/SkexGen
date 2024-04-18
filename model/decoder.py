@@ -115,7 +115,7 @@ class SketchDecoder(nn.Module):
       c_bs, c_seqlen = pixel_v.shape[0], pixel_v.shape[1]  
  
     # Context embedding values
-    context_embedding = torch.zeros((1, c_bs, self.embed_dim)).cuda() # [1, bs, dim]
+    context_embedding = torch.zeros((1, c_bs, self.embed_dim)) # [1, bs, dim]
 
     # Data input embedding
     if c_seqlen > 0:
@@ -129,12 +129,12 @@ class SketchDecoder(nn.Module):
       decoder_inputs = self.pos_embed(context_embedding)
   
     memory = latent_z.transpose(0,1)
-    pos_mem = self.mempos((torch.Tensor([0]*4 + [1]*2)).long().cuda()).unsqueeze(1).repeat(1, c_bs, 1)  
+    pos_mem = self.mempos((torch.Tensor([0]*4 + [1]*2)).long()).unsqueeze(1).repeat(1, c_bs, 1)  
     memory_encode = memory + pos_mem
     
-    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(c_seqlen+1).cuda()  # masked with -inf
+    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(c_seqlen+1)  # masked with -inf
     if pixel_mask is not None:
-      pixel_mask = torch.cat([(torch.zeros([c_bs, context_embedding.shape[0]])==1).cuda(), pixel_mask], axis=1)    
+      pixel_mask = torch.cat([(torch.zeros([c_bs, context_embedding.shape[0]])==1), pixel_mask], axis=1)    
     decoder_out = self.decoder(tgt=decoder_inputs, memory=memory_encode, memory_key_padding_mask=None,
                                tgt_mask=nopeak_mask, tgt_key_padding_mask=pixel_mask)
 
@@ -190,8 +190,8 @@ class SketchDecoder(nn.Module):
       next_pixels = np.vstack(next_pixels)  # [BS, 1]
         
       # Add next tokens
-      nextp_seq = torch.LongTensor(next_pixels).view(len(next_pixels), 1).cuda()
-      nextxy_seq = torch.LongTensor(next_xys).unsqueeze(1).cuda()
+      nextp_seq = torch.LongTensor(next_pixels).view(len(next_pixels), 1)
+      nextxy_seq = torch.LongTensor(next_xys).unsqueeze(1)
       
       if pixel_seq[0] is None:
         pixel_seq = nextp_seq
@@ -265,7 +265,7 @@ class EXTDecoder(nn.Module):
       c_bs, c_seqlen = ext_v.shape[0], ext_v.shape[1]  
     
     # Context embedding values
-    context_embedding = torch.zeros((1, c_bs, self.embed_dim)).cuda() # [1, bs, dim]
+    context_embedding = torch.zeros((1, c_bs, self.embed_dim)) # [1, bs, dim]
 
     # Data input embedding
     embeddings = None
@@ -282,9 +282,9 @@ class EXTDecoder(nn.Module):
     # Pass through decoder
     memory = code.transpose(0,1)
   
-    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(c_seqlen+1).cuda()  # masked with -inf
+    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(c_seqlen+1)  # masked with -inf
     if ext_mask is not None:
-      ext_mask = torch.cat([(torch.zeros([c_bs, 1])==1).cuda(), ext_mask], axis=1)
+      ext_mask = torch.cat([(torch.zeros([c_bs, 1])==1), ext_mask], axis=1)
     decoder_out = self.decoder(tgt=decoder_inputs, memory=memory, 
                             tgt_mask=nopeak_mask, tgt_key_padding_mask=ext_mask)
 
@@ -319,11 +319,11 @@ class EXTDecoder(nn.Module):
         
       # Add next tokens
       next_pixels = np.vstack(next_pixels)  # [BS, 1]
-      nextp_seq = torch.LongTensor(next_pixels).view(len(next_pixels), 1).cuda()
+      nextp_seq = torch.LongTensor(next_pixels).view(len(next_pixels), 1)
       
       if pixel_seq[0] is None:
         pixel_seq = nextp_seq
-        flag_seq = torch.LongTensor(np.vstack([1] * n_samples)).cuda()
+        flag_seq = torch.LongTensor(np.vstack([1] * n_samples))
       
       else:
         pixel_seq = torch.cat([pixel_seq, nextp_seq], 1)
@@ -336,7 +336,7 @@ class EXTDecoder(nn.Module):
           next_flag[index] = e_flag[start_idx]
 
         next_flag = next_flag.reshape(-1, 1)
-        flag_seq = torch.cat([flag_seq, torch.LongTensor(next_flag).cuda()], 1)
+        flag_seq = torch.cat([flag_seq, torch.LongTensor(next_flag)], 1)
       
       # Early stopping
       done_idx = np.where(next_pixels==0)[0]

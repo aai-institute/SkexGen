@@ -102,7 +102,7 @@ class CodeModel(nn.Module):
       bs, seq_len = code.shape[0], code.shape[1]
 
     # Context embedding values
-    context_embedding = torch.zeros((bs, 1, self.embed_dim)).cuda() # [bs, 1, dim]
+    context_embedding = torch.zeros((bs, 1, self.embed_dim)) # [bs, 1, dim]
       
     if seq_len > 0:
       embeddings = self.embed(code.flatten()).view(bs, code.shape[1], self.embed_dim)  # [bs, seqlen, dim]
@@ -113,8 +113,8 @@ class CodeModel(nn.Module):
     else:
       decoder_inputs = self.pos_embed(context_embedding.transpose(0,1))   # [1, bs, dim]
       
-    memory = torch.zeros((1, bs, self.embed_dim)).cuda()
-    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(decoder_inputs.shape[0]).cuda()  # masked with -inf
+    memory = torch.zeros((1, bs, self.embed_dim))
+    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(decoder_inputs.shape[0])  # masked with -inf
     decoder_outputs = self.decoder(tgt=decoder_inputs, memory=memory, memory_key_padding_mask=None,
                                    tgt_mask=nopeak_mask, tgt_key_padding_mask=None)
     
@@ -149,7 +149,7 @@ class CodeModel(nn.Module):
             next_vs.append(next_v.item())
 
         # Add next tokens
-        next_seq = torch.LongTensor(next_vs).view(len(next_vs), 1).cuda()
+        next_seq = torch.LongTensor(next_vs).view(len(next_vs), 1)
         if v_seq[0] is None:
             v_seq = next_seq
         else:
@@ -198,7 +198,7 @@ class CondARModel(nn.Module):
       bs, seq_len = code.shape[0], code.shape[1]
 
     # Context embedding
-    context_embedding = torch.zeros((bs, 1, self.embed_dim)).cuda() # [bs, 1, dim]
+    context_embedding = torch.zeros((bs, 1, self.embed_dim)) # [bs, 1, dim]
     
     # Code seq embedding 
     if seq_len > 0:
@@ -214,7 +214,7 @@ class CondARModel(nn.Module):
       
     # Pass through AR decoder
     memory = cond_input.transpose(0,1)
-    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(decoder_inputs.shape[0]).cuda()  # masked with -inf
+    nopeak_mask = torch.nn.Transformer.generate_square_subsequent_mask(decoder_inputs.shape[0])  # masked with -inf
     decoder_outputs = self.decoder(tgt=decoder_inputs, memory=memory, tgt_mask=nopeak_mask)
    
     # Get logits 
@@ -247,7 +247,7 @@ class CondARModel(nn.Module):
             next_vs.append(next_v.item())
 
         # Add next tokens
-        next_seq = torch.LongTensor(next_vs).view(len(next_vs), 1).cuda()
+        next_seq = torch.LongTensor(next_vs).view(len(next_vs), 1)
         if v_seq[0] is None:
             v_seq = next_seq
         else:
